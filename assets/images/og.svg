@@ -2,7 +2,7 @@
 <!--
   Source for og.png. Rendered with:
 
-    XDG_DATA_HOME=<dir holding fonts/geo.ttf> \
+    XDG_DATA_HOME=<dir holding the app's fonts/*.ttf> \
       rsvg-convert -w 1200 -h 630 og.svg -o og.png
 
   Colours are the dark-theme tokens from the app's theme.slint, so the card,
@@ -32,13 +32,13 @@
   <text x="142" y="124" font-family="Geo" font-size="54" fill="#e8eaef">rPGP</text>
 
   <!-- ────────────────────────────────────────────────────────── headline -->
-  <g font-family="Noto Sans, sans-serif" font-weight="700" font-size="56"
+  <g font-family="Geist, sans-serif" font-weight="700" font-size="56"
      fill="#e8eaef" letter-spacing="-1.4">
     <text x="80" y="238">Your certificates,</text>
     <text x="80" y="302">in a window.</text>
   </g>
 
-  <g font-family="Noto Sans, sans-serif" font-size="23" fill="#99a1b0">
+  <g font-family="Geist, sans-serif" font-size="23" fill="#99a1b0">
     <text x="80" y="358">An OpenPGP certificate manager</text>
     <text x="80" y="390">for Linux and macOS.</text>
   </g>
@@ -58,7 +58,7 @@
     <circle cx="700" cy="149" r="5" fill="#363c47"/>
     <circle cx="716" cy="149" r="5" fill="#363c47"/>
     <circle cx="732" cy="149" r="5" fill="#363c47"/>
-    <text x="900" y="153" font-family="Noto Sans, sans-serif" font-size="12"
+    <text x="900" y="153" font-family="Geist, sans-serif" font-size="12"
           fill="#6b7385" text-anchor="middle">rPGP</text>
     <rect x="680" y="165" width="440" height="1" fill="#272b33"/>
 
@@ -67,7 +67,7 @@
     <rect x="680" y="166" width="3" height="76" fill="#6f8dff"/>
 
     <!-- rows -->
-    <g font-family="Noto Sans, sans-serif">
+    <g font-family="Geist, sans-serif">
       <!-- Ada -->
       <circle cx="719" cy="204" r="19" fill="#6f8dff" fill-opacity="0.15"/>
       <text x="719" y="209" font-size="14" font-weight="700" fill="#6f8dff" text-anchor="middle">AL</text>
@@ -104,7 +104,7 @@
     <!-- status bar -->
     <rect x="680" y="470" width="440" height="28" fill="#16181d"/>
     <rect x="680" y="470" width="440" height="1" fill="#272b33"/>
-    <text x="700" y="489" font-family="Noto Sans, sans-serif" font-size="12"
+    <text x="700" y="489" font-family="Geist, sans-serif" font-size="12"
           fill="#99a1b0">7 certificate(s), 2 with a secret key</text>
   </g>
   <rect x="680.5" y="132.5" width="439" height="365" rx="14" fill="none" stroke="#272b33"/>

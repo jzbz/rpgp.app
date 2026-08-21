@@ -29,6 +29,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rpgp.app/assets/images/og.png">
 
+<link rel="preload" href="assets/fonts/geist-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/geo.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 
@@ -92,7 +93,7 @@
       <a href="#window">The window</a>
       <a href="#trust">Trust</a>
       <a href="#cards">Cards</a>
-      <a href="#build">Build</a>
+      <a href="#download">Download</a>
     </nav>
 
     <div class="head-actions">
@@ -104,6 +105,7 @@
       <a class="btn" href="https://github.com/jzbz/rpgp">
         GitHub<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg>
       </a>
+      <a class="btn btn-primary" href="#download">Download</a>
     </div>
   </div>
 </header>
@@ -131,15 +133,12 @@
     </p>
 
     <div class="hero-actions">
-      <a class="btn btn-primary btn-lg" href="https://github.com/jzbz/rpgp">
+      <a class="btn btn-primary btn-lg" href="#download">
+        <svg class="ico" aria-hidden="true"><use href="#i-arrow-in"/></svg>Download for Linux
+      </a>
+      <a class="btn btn-lg" href="https://github.com/jzbz/rpgp">
         Read the source<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg>
       </a>
-      <div class="cmd" data-copy="cargo run -p rpgp-gui">
-        <code>cargo run -p rpgp-gui</code>
-        <button class="copy" type="button" aria-label="Copy the build command">
-          <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
-        </button>
-      </div>
     </div>
   </div>
 </section>
@@ -581,16 +580,45 @@
 </section>
 
 <!-- ------------------------------------------------------------ build -->
-<section class="band" id="build">
+<section class="band" id="download">
   <div class="wrap wrap-narrow center">
-    <p class="section-label">BUILD AND RUN</p>
-    <h2>There are no release binaries yet.</h2>
+    <p class="section-label">GET IT</p>
+    <h2>Download for Linux.</h2>
     <p class="deck">
-      Build from source. It needs the Cap'n Proto compiler
-      (<code>capnp</code>) installed.
+      A Flatpak bundle, so it carries its own runtime rather than needing a
+      glibc and a set of system libraries that happen to match.
     </p>
 
-    <div class="cmd cmd-block cmd-hero" data-copy="cargo run -p rpgp-gui">
+    <div class="downloads">
+      <a class="btn btn-primary btn-lg" href="https://github.com/jzbz/rpgp/releases/latest">
+        <svg class="ico" aria-hidden="true"><use href="#i-arrow-in"/></svg>Download for Linux
+      </a>
+      <span class="platform-soon">
+        <svg class="ico" aria-hidden="true"><use href="#i-refresh"/></svg>macOS — coming soon
+      </span>
+    </div>
+
+    <p class="note">
+      Built for <code>x86_64</code> and <code>aarch64</code>, each with a
+      SHA-256 sum beside it. Install the one you downloaded:
+    </p>
+
+    <div class="cmd cmd-block" data-copy="flatpak install ./rpgp-x86_64.flatpak">
+      <code>flatpak install ./rpgp-x86_64.flatpak</code>
+      <button class="copy" type="button" aria-label="Copy the install command">
+        <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
+      </button>
+    </div>
+
+    <div class="divider divider-spaced"></div>
+
+    <h3 class="h2-ish">Or build it yourself.</h3>
+    <p class="note">
+      From source, which needs the Cap'n Proto compiler (<code>capnp</code>)
+      installed.
+    </p>
+
+    <div class="cmd cmd-block" data-copy="cargo run -p rpgp-gui">
       <code>cargo run -p rpgp-gui</code>
       <button class="copy" type="button" aria-label="Copy the build command">
         <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
@@ -609,12 +637,6 @@
         <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
       </button>
     </div>
-
-    <p class="hero-actions center-actions">
-      <a class="btn btn-primary btn-lg" href="https://github.com/jzbz/rpgp">
-        github.com/jzbz/rpgp<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg>
-      </a>
-    </p>
   </div>
 </section>
 

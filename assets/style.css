@@ -7,6 +7,33 @@
 
 /* ---------------------------------------------------------------- fonts */
 
+/* Geist — the interface font, bundled the way the app bundles it. Without it
+   the page falls back to whatever the platform resolves, which is not the same
+   face twice; app-window.slint gives the same reasoning for shipping it.
+   Three weights, matching what the UI actually asks for. SIL Open Font
+   License 1.1; see fonts/OFL.txt. */
+@font-face {
+    font-family: "Geist";
+    src: url("fonts/geist-regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Geist";
+    src: url("fonts/geist-semibold.woff2") format("woff2");
+    /* Theme.w-medium is 550, which both Slint and CSS font-matching resolve
+       upward to this face. Shipping a Medium changed nothing, so there is
+       none — the app's own font LICENSE records the same finding. */
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Geist";
+    src: url("fonts/geist-bold.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+}
+
 /* Geo — the wordmark only. Same file the app embeds, converted back to the
    WOFF2 it started life as. SIL Open Font License 1.1; see fonts/OFL.txt. */
 @font-face {
@@ -101,9 +128,10 @@
 
     --fast: 120ms;
 
-    /* The app uses the platform UI font; so does the page. */
-    --ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-        Arial, "Noto Sans", sans-serif;
+    /* app-window.slint sets default-font-family: "Geist"; so does the page.
+       The rest of the stack is only a fallback for a failed font load. */
+    --ui: "Geist", system-ui, -apple-system, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
     --mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo,
         Consolas, monospace;
 }
@@ -1117,3 +1145,32 @@ code {
         word-break: break-all;
     }
 }
+
+/* ---------------------------------------------------------- downloads */
+
+.downloads {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--s3);
+    margin-top: var(--s5);
+}
+
+/* Not a button: there is nothing to click yet, so it should not look like
+   there is. */
+.platform-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 var(--s4);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-sm);
+    color: var(--text-dim);
+    font-size: var(--t-lg);
+    white-space: nowrap;
+}
+.platform-soon .ico { color: var(--text-faint); }
+
+.divider-spaced { margin: var(--s6) 0; }
