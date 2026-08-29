@@ -33,15 +33,15 @@
 <link rel="preload" href="assets/fonts/geo.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 
-<!-- Stamp a stored theme choice before the first paint, so someone who has
-     chosen light does not get a flash of the dark default first. With no
-     stored choice this does nothing and the stylesheet's default stands. -->
+<!-- Stamp a stored choice of light before the first paint, so someone who has
+     chosen it does not get a flash of the dark default first. Only light is
+     ever stamped: dark is what the stylesheet already does, so a `dark` class
+     would be a class with no rule behind it. -->
 <script>
 (function () {
     try {
-        var stored = localStorage.getItem("rpgp-theme");
-        if (stored === "light" || stored === "dark") {
-            document.documentElement.classList.add(stored);
+        if (localStorage.getItem("rpgp-theme") === "light") {
+            document.documentElement.classList.add("light");
         }
     } catch (e) {
         /* No storage available. The stylesheet's dark default stands. */

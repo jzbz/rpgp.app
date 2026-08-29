@@ -22,8 +22,9 @@
         /* Private mode, or storage disabled. Follow the system and move on. */
     }
 
-    /* Reflect the theme on the control without claiming one, so the button is
-       right even while the media query is still in charge. */
+    /* Reflect the theme on the control, including before anybody has chosen
+       one — there is no media query behind this, so the button describes the
+       stylesheet's own default until it is told otherwise. */
     function syncButton(theme) {
         var button = document.getElementById("theme-toggle");
         if (!button) { return; }
@@ -35,10 +36,21 @@
     }
 
     function apply(theme) {
-        /* Both classes are explicit: the stylesheet serves the dark palette
-           from a media query as well, and `.light` is what overrides it. */
-        root.classList.toggle("dark", theme === "dark");
+        /* Transitions off across the switch, and a forced reflow in the middle
+           of it. A declared transition stops the property being recomputed
+           when only a custom property underneath it changed, so the header,
+           the nav links, the copy buttons and the selected row kept the
+           palette they were built with. Reading a layout property with
+           transitions suppressed forces the recalculation that settles them,
+           and restoring transitions afterwards has nothing left to animate.
+
+           Only `.light` is toggled: dark is what the stylesheet already does,
+           so a `dark` class would be a class with no rule behind it. */
+        root.classList.add("theming");
         root.classList.toggle("light", theme === "light");
+        void root.offsetHeight;
+        root.classList.remove("theming");
+
         syncButton(theme);
     }
 

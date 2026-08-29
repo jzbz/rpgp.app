@@ -178,6 +178,20 @@
     --mono-5: #0d6d80;
 }
 
+/* Held for one frame while the theme is switched.
+ *
+ * A transition whose value comes from a custom property does not re-run when
+ * that property changes: the element keeps the colour it settled on. The
+ * header, the nav links, the copy buttons and the selected certificate row all
+ * stayed on the dark palette after a switch to light, and stayed there — a
+ * reload was the only way out. Switching with transitions off is also the
+ * better behaviour on its own: a theme change is one decision, not the page
+ * crossing over a piece at a time. */
+:root.theming *,
+:root.theming *::before,
+:root.theming *::after {
+    transition: none !important;
+}
 
 
 /* ---------------------------------------------------------------- base */
