@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>rPGP — an OpenPGP certificate manager for Linux and macOS</title>
+<title>rPGP — an OpenPGP certificate manager for Linux, macOS and Windows</title>
 <meta name="description" content="A window that lists your certificates and lets you generate, import, export, sign, encrypt, decrypt and verify without touching a command line. Rust throughout, Slint for the GUI, Sequoia for OpenPGP.">
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="assets/images/icon.svg" type="image/svg+xml">
@@ -24,7 +24,7 @@
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="rPGP — your certificates, in a window. An OpenPGP certificate manager for Linux and macOS, shown as a window listing certificates with verified and partly verified badges.">
+<meta property="og:image:alt" content="rPGP — your certificates, in a window. An OpenPGP certificate manager for Linux, macOS and Windows, shown as a window listing certificates with verified and partly verified badges.">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rpgp.app/assets/images/og.png">
@@ -115,7 +115,7 @@
 <!-- ------------------------------------------------------------- hero -->
 <section class="hero" id="top">
   <div class="wrap">
-    <p class="eyebrow">OpenPGP certificate manager · Linux and macOS</p>
+    <p class="eyebrow">OpenPGP certificate manager · Linux, macOS and Windows</p>
 
     <h1 class="hero-h1">Your certificates,<br>in a window.</h1>
 
@@ -134,7 +134,7 @@
 
     <div class="hero-actions">
       <a class="btn btn-primary btn-lg" href="#download">
-        <svg class="ico" aria-hidden="true"><use href="#i-arrow-in"/></svg>Download for Linux
+        <svg class="ico" aria-hidden="true"><use href="#i-arrow-in"/></svg>Download
       </a>
       <a class="btn btn-lg" href="https://github.com/jzbz/rpgp">
         Read the source<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg>
@@ -583,29 +583,67 @@
 <section class="band" id="download">
   <div class="wrap wrap-narrow center">
     <p class="section-label">GET IT</p>
-    <h2>Download for Linux.</h2>
+    <h2>Download.</h2>
     <p class="deck">
-      A Flatpak bundle, so it carries its own runtime rather than needing a
-      glibc and a set of system libraries that happen to match.
+      Linux as a Flatpak bundle, so it carries its own runtime rather than
+      needing a glibc and system libraries that happen to match. macOS as a
+      signed, notarised app. Windows as one self-contained executable.
     </p>
 
     <div class="downloads">
       <a class="btn btn-primary btn-lg" href="https://github.com/jzbz/rpgp/releases/latest">
-        <svg class="ico" aria-hidden="true"><use href="#i-arrow-in"/></svg>Download for Linux
+        <svg class="ico" aria-hidden="true"><use href="#i-arrow-in"/></svg>Download
       </a>
-      <span class="platform-soon">
-        <svg class="ico" aria-hidden="true"><use href="#i-refresh"/></svg>macOS — coming soon
-      </span>
+      <a class="btn btn-lg" href="https://github.com/jzbz/rpgp/releases/latest">
+        Every file<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg>
+      </a>
     </div>
 
     <p class="note">
-      Built for <code>x86_64</code> and <code>aarch64</code>, each with a
-      SHA-256 sum beside it. Install the one you downloaded:
+      Linux, built for <code>x86_64</code> and <code>aarch64</code>. Install
+      the one you downloaded:
     </p>
 
     <div class="cmd cmd-block" data-copy="flatpak install ./rpgp-x86_64.flatpak">
       <code>flatpak install ./rpgp-x86_64.flatpak</code>
-      <button class="copy" type="button" aria-label="Copy the install command">
+      <button class="copy" type="button" aria-label="Copy the Flatpak install command">
+        <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
+      </button>
+    </div>
+
+    <p class="note">
+      macOS, one universal app for Apple Silicon and Intel. Signed and
+      notarised, so it opens rather than having to be talked past Gatekeeper.
+    </p>
+
+    <div class="cmd cmd-block" data-copy="brew install --cask jzbz/rpgp/rpgp">
+      <code>brew install --cask jzbz/rpgp/rpgp</code>
+      <button class="copy" type="button" aria-label="Copy the Homebrew install command">
+        <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
+      </button>
+    </div>
+
+    <p class="note">
+      Windows, a single <code>x86_64</code> executable with nothing to install
+      and no runtime to fetch.
+    </p>
+
+    <div class="cmd cmd-block" data-copy="winget install rPGP.rPGP">
+      <code>winget install rPGP.rPGP</code>
+      <button class="copy" type="button" aria-label="Copy the winget install command">
+        <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
+      </button>
+    </div>
+
+    <p class="note">
+      Every release carries one <code>SHA256SUMS</code> covering all of them,
+      signed by hand with the key that signs the commits. Check it before
+      trusting any of this:
+    </p>
+
+    <div class="cmd cmd-block cmd-dim" data-copy="gpg --verify SHA256SUMS.asc SHA256SUMS &amp;&amp; sha256sum -c SHA256SUMS">
+      <code>gpg --verify SHA256SUMS.asc SHA256SUMS &amp;&amp; sha256sum -c SHA256SUMS</code>
+      <button class="copy" type="button" aria-label="Copy the verification command">
         <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
       </button>
     </div>
@@ -627,12 +665,12 @@
 
     <p class="note">
       To try it with content in it, seed a throwaway store — it writes only
-      inside the <code>XDG_DATA_HOME</code> you give it. That is where the
+      inside the directory you name, and never the real one. That is where the
       certificates above come from.
     </p>
 
-    <div class="cmd cmd-block cmd-dim" data-copy="XDG_DATA_HOME=/tmp/rpgp-demo cargo run -p rpgp-core --example seed-demo-store">
-      <code>XDG_DATA_HOME=/tmp/rpgp-demo cargo run -p rpgp-core --example seed-demo-store</code>
+    <div class="cmd cmd-block cmd-dim" data-copy="cargo run -p rpgp-core --example seed-demo-store -- /tmp/rpgp-demo">
+      <code>cargo run -p rpgp-core --example seed-demo-store -- /tmp/rpgp-demo</code>
       <button class="copy" type="button" aria-label="Copy the demo store command">
         <svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
       </button>
@@ -647,7 +685,7 @@
     <div class="colophon-brand">
       <svg class="ico ico-32" aria-hidden="true"><use href="#i-shield"/></svg>
       <span class="wordmark">rPGP</span>
-      <p>An OpenPGP certificate manager for Linux and macOS.</p>
+      <p>An OpenPGP certificate manager for Linux, macOS and Windows.</p>
     </div>
   </div>
 </footer>
