@@ -1188,3 +1188,14 @@ code {
 .platform-soon .ico { color: var(--text-faint); }
 
 .divider-spaced { margin: var(--s6) 0; }
+
+/* Footer links, sitting to the right of the brand. Written in this file's own
+   tokens rather than lifted from azzurro.blue, which names them differently
+   (--dim and --t-body there, --text-dim and --t-sm here); pasting that rule
+   across would have referenced variables this stylesheet does not define, and
+   the links would have rendered unstyled. */
+.colophon-inner { flex-wrap: wrap; gap: var(--s4); }
+.colophon-links { display: flex; flex-wrap: wrap; gap: var(--s5); margin-left: auto; font-size: var(--t-sm); }
+.colophon-links a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--text-dim); }
+.colophon-links a:hover { color: var(--text); text-decoration: underline; }
+.colophon-links .ico { width: 13px; height: 13px; }
