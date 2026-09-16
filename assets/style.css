@@ -812,8 +812,6 @@ code, kbd, samp, pre { font-family: var(--mono); font-synthesis: none; }
     gap: var(--s3);
     margin-top: var(--s6);
 }
-.center-actions { justify-content: center; }
-
 .btn-lg { height: 40px; padding: 0 var(--s4); font-size: var(--t-lg); text-decoration: none; }
 a.btn { text-decoration: none; }
 a.btn:hover { background: var(--hover); }
@@ -862,22 +860,11 @@ a.btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink);
 
 .cmd-block { display: flex; width: 100%; height: auto; min-height: 44px; padding: var(--s2) var(--s2) var(--s2) var(--s4); margin-top: var(--s4); }
 .cmd-block code { flex: 1 1 auto; min-width: 0; }
-.cmd-hero { margin-top: var(--s5); }
-.cmd-hero code { font-size: var(--t-lg); }
 .cmd-dim code { font-size: var(--t-sm); color: var(--text-dim); }
 
 /* the window on its stage */
 .window-section { padding: var(--s5) 0 96px; }
 .stage { margin: 0; }
-.stage figcaption {
-    max-width: 68ch;
-    margin: var(--s5) auto 0;
-    font-size: var(--t-sm);
-    line-height: 1.6;
-    color: var(--text-dim);
-    text-align: center;
-}
-.stage figcaption code { font-size: var(--t-xs); }
 
 /* bands */
 .band { padding: 96px 0; border-top: 1px solid var(--border); }
@@ -1009,7 +996,6 @@ code {
 .colophon { padding: 64px 0; background: var(--surface-sunken); border-top: 1px solid var(--border); }
 .colophon-inner { display: flex; align-items: center; }
 .colophon p { margin-top: var(--s2); font-size: var(--t-sm); line-height: 1.7; color: var(--text-dim); }
-.colophon .section-label { padding: 0; }
 .colophon-brand { color: var(--accent); }
 .colophon-brand .wordmark { font-size: var(--t-2xl); vertical-align: middle; margin-left: var(--s2); }
 .colophon-brand .ico-32 { vertical-align: middle; }
@@ -1170,22 +1156,6 @@ code {
     gap: var(--s3);
     margin-top: var(--s5);
 }
-
-/* Not a button: there is nothing to click yet, so it should not look like
-   there is. */
-.platform-soon {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 40px;
-    padding: 0 var(--s4);
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--r-sm);
-    color: var(--text-dim);
-    font-size: var(--t-lg);
-    white-space: nowrap;
-}
-.platform-soon .ico { color: var(--text-faint); }
 
 .divider-spaced { margin: var(--s6) 0; }
 

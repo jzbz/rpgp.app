@@ -14,6 +14,7 @@
     /* ------------------------------------------------------------ theme */
 
     var root = document.documentElement;
+    var themeColor = document.querySelector('meta[name="theme-color"]');
     var stored = null;
 
     try {
@@ -51,6 +52,11 @@
         void root.offsetHeight;
         root.classList.remove("theming");
 
+        /* Keep the browser chrome on the same palette as the page. */
+        if (themeColor) {
+            themeColor.setAttribute("content", theme === "light" ? "#f5f6f9" : "#131519");
+        }
+
         syncButton(theme);
     }
 
@@ -68,7 +74,6 @@
         toggle.hidden = false;
         toggle.addEventListener("click", function () {
             var next = current() === "dark" ? "light" : "dark";
-            stored = next;
             try {
                 localStorage.setItem("rpgp-theme", next);
             } catch (e) {
@@ -104,7 +109,7 @@
         if (copyStatus) { copyStatus.textContent = message; }
     }
 
-    Array.prototype.forEach.call(document.querySelectorAll(".cmd"), function (cmd) {
+    document.querySelectorAll(".cmd").forEach(function (cmd) {
         var button = cmd.querySelector(".copy");
         if (!button || !navigator.clipboard) {
             if (button) { button.remove(); }
@@ -260,7 +265,7 @@
                         '<span class="pills">' + authPill(cert) + secretPill(cert) +
                             '<span class="pill pill-ok">valid</span>' +
                         "</span>" +
-                        '<span class="cert-caps">CSE · until 2028-08-10</span>' +
+                        '<span class="cert-caps">CSE · until ' + EXPIRES + '</span>' +
                     "</span>" +
                     /* An absent pill is meaningful to a sighted reader and
                        silent to everyone else, so the one case with no pill
