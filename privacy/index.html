@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — rPGP</title>
+<meta name="description" content="What rPGP stores on your computer, what it sends when you look up or publish a certificate, and what it never does.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="../assets/images/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+<link rel="canonical" href="https://rpgp.app/privacy/">
+
+<meta name="theme-color" content="#131519">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rPGP">
+<meta property="og:title" content="rPGP — privacy">
+<meta property="og:description" content="What rPGP stores on your computer, what it sends when you look up or publish a certificate, and what it never does.">
+
+<link rel="preload" href="../assets/fonts/geist-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/geo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- The home page's pre-paint theme stamp, unchanged: only light is ever
+     stamped, since dark is what the stylesheet already does. -->
+<script>
+(function () {
+    try {
+        if (localStorage.getItem("rpgp-theme") === "light") {
+            document.documentElement.classList.add("light");
+        }
+    } catch (e) {
+        /* No storage available. The stylesheet's dark default stands. */
+    }
+}());
+</script>
+</head>
+<body>
+
+<!-- Lucide icons, ISC licensed: the two this page uses, from the same set as
+     the home page. -->
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <symbol viewBox="0 0 24 24" id="i-shield"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+    <symbol viewBox="0 0 24 24" id="i-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head" id="siteHead">
+  <div class="wrap head-inner">
+    <a class="brand" href="../" aria-label="rPGP, home">
+      <svg class="ico ico-24" aria-hidden="true"><use href="#i-shield"/></svg>
+      <span class="brand-word">rPGP</span>
+    </a>
+
+    <nav class="head-nav" aria-label="Sections">
+      <a href="#summary">Summary</a>
+      <a href="#stored">Stored</a>
+      <a href="#network">Network</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="head-actions">
+      <button class="btn btn-ghost btn-icon" id="theme-toggle" type="button" hidden
+              aria-pressed="false" aria-label="Switch to the dark theme">
+        <svg class="ico ico-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="ico ico-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+      <a class="btn" href="https://github.com/jzbz/rpgp">
+        GitHub<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg>
+      </a>
+      <a class="btn btn-primary" href="../#download">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+<!-- ------------------------------------------------------------- hero -->
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Privacy policy</p>
+
+    <h1 class="hero-h1">What rPGP keeps,<br>and what it sends.</h1>
+
+    <p class="hero-deck">
+      rPGP keeps your certificates and keys in files on your own computer, and
+      goes online only when you look a certificate up or publish your own.
+      This page says what those files hold, what those requests carry and who
+      receives them, precisely enough to check against the source.
+    </p>
+
+    <p class="hero-stack">Effective 2026-09-28 · covers rPGP 0.1.3 and the unreleased code after it</p>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------- summary -->
+<section class="band" id="summary">
+  <div class="wrap policy">
+    <p class="section-label">IN SHORT</p>
+    <h2>Nothing goes online until you ask.</h2>
+
+    <ul>
+      <li>
+        <strong>Stored on your computer:</strong> certificates, secret keys,
+        revocation certificates and three short lists of fingerprints, in files
+        under your user account, along with Sequoia's index of the certificates
+        (names and e-mail addresses included) and its cache of signatures it
+        has checked. There is no settings file and no log file.
+      </li>
+      <li>
+        <strong>Secret keys</strong> are kept apart from certificates, in files
+        restricted to your user account. A key generated with a passphrase is
+        stored encrypted with it, and one generated without a passphrase is
+        stored unencrypted. An imported key keeps the protection it arrived
+        with, encrypted or not.
+      </li>
+      <li>
+        <strong>Look up</strong> sends what you typed to the Web Key Directory
+        of the e-mail address's domain, to the keyserver (keys.openpgp.org
+        unless you change it), or to both.
+      </li>
+      <li>
+        <strong>Publish</strong> uploads your public certificate to the
+        keyserver, then asks the keyserver to e-mail every address on it that
+        the keyserver does not report as published, revoked ones included.
+      </li>
+      <li>
+        <strong>Nothing else goes out.</strong> Nothing is sent at startup or
+        in the background. No telemetry, analytics, crash reports or update
+        checks, and no account. rPGP never sends a secret key or a
+        passphrase anywhere.
+      </li>
+      <li>
+        <strong>Every server a request reaches sees your IP address,</strong>
+        or in 0.1.3 that of an HTTP proxy you have set. rPGP cannot use SOCKS
+        or Tor itself.
+      </li>
+      <li>
+        <strong>On the same computer,</strong> rPGP also talks to your
+        gpg-agent, the desktop's file dialogs and clipboard, and accessibility
+        services. Those connections stay on your computer, unless your session
+        is itself forwarded from another one.
+      </li>
+    </ul>
+
+    <p>
+      <strong>Two versions.</strong> This page covers rPGP 0.1.3, the current
+      release, and the code after it. Where the code after 0.1.3 behaves
+      differently, both are described, marked
+      <span class="pill">0.1.3</span> and
+      <span class="pill pill-accent">after 0.1.3</span>. "After 0.1.3" means
+      the <code>master</code> branch at commit <code>c1f0b54</code>, which has
+      not been released yet. A build of it still reports 0.1.3 in its About
+      dialog and its <code>User-Agent</code>; the "after 0.1.3" rows are what
+      it does.
+    </p>
+  </div>
+</section>
+
+<!-- ----------------------------------------------------------- stored -->
+<section class="band band-sunken" id="stored">
+  <div class="wrap policy">
+    <p class="section-label">ON YOUR COMPUTER</p>
+    <h2>What rPGP keeps, and where.</h2>
+    <p class="deck">
+      Apart from files you ask it to write, rPGP keeps all of its own files
+      in two directories: one for public certificates, and its own for secret
+      keys and everything else.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col"></th><th scope="col">Certificates</th><th scope="col">Secret keys and rPGP's own files</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Linux</th>
+            <td><code>$XDG_DATA_HOME/<wbr>pgp.cert.d</code>, by default <code>~/.local/<wbr>share/<wbr>pgp.cert.d</code></td>
+            <td><code>$XDG_DATA_HOME/<wbr>rpgp/</code>, by default <code>~/.local/<wbr>share/<wbr>rpgp/</code></td>
+          </tr>
+          <tr>
+            <th scope="row">Linux, Flatpak</th>
+            <td><code>~/.var/<wbr>app/<wbr>app.rpgp.rpgp/<wbr>data/<wbr>pgp.cert.d</code></td>
+            <td><code>~/.var/<wbr>app/<wbr>app.rpgp.rpgp/<wbr>data/<wbr>rpgp/</code></td>
+          </tr>
+          <tr>
+            <th scope="row">macOS</th>
+            <td><code>~/Library/<wbr>Application Support/<wbr>pgp.cert.d</code></td>
+            <td><code>~/Library/<wbr>Application Support/<wbr>rpgp/</code></td>
+          </tr>
+          <tr>
+            <th scope="row">Windows</th>
+            <td><code>%APPDATA%\<wbr>pgp.cert.d</code> (roaming)</td>
+            <td><code>%LOCALAPPDATA%\<wbr>rpgp\</code> (local)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Setting <code>RPGP_CERT_STORE</code> moves the certificate directory.
+      <code>PGP_CERT_D</code>, which other Sequoia tools read for the same
+      purpose, is not honoured.
+    </p>
+
+    <h3>Public certificates</h3>
+    <p>
+      The certificate directory is a standard pgp-cert-d store, the one
+      <code>sq</code> and other Sequoia tools use by default, so on a native
+      build they see what you import and rPGP sees theirs. The Flatpak keeps
+      its own, separate from the host's.
+    </p>
+    <p>
+      It holds the certificates you create or import, public halves only:
+      secret key material is stripped before anything is written there. That
+      includes the names and e-mail addresses on them, and the certifications
+      you make, local ones included, which are never exported or published.
+    </p>
+    <p>
+      Sequoia's certificate store keeps two SQLite databases in the same
+      directory, created the first time rPGP starts even if you do nothing
+      else, and SQLite's <code>-wal</code> and <code>-shm</code> files can
+      sit beside them. One is an index of every certificate's fingerprint, key IDs, user
+      IDs, e-mail addresses and domains. The other is a cache that can hold a
+      one-way hash of each signature rPGP has checked, with the day it was
+      last used: signatures on certificates, including those a lookup
+      returns before you import anything, and signatures on files and
+      messages you verify. A hash is not the signature, but anyone who has
+      the same signature and what it covers can tell from the cache whether
+      rPGP on this computer has checked it. Their names contain your
+      computer's host name, as in
+      <code>_sequoia_cert_store_index_v1_on_&lt;hostname&gt;.sqlite</code>.
+    </p>
+    <p>
+      rPGP does not restrict who can read this directory. Whether other
+      accounts on the same computer can read it depends on your system's
+      default permissions for new files.
+    </p>
+    <p>
+      On Windows it sits in roaming AppData. Where roaming profiles or folder
+      redirection are in use, that folder, index and cache included, is kept
+      on a server your organisation's domain controls: a roaming profile
+      copies it there when you sign out and back when you sign in, and folder
+      redirection keeps it there. That is Windows moving the files, not rPGP.
+      Secret keys are kept in local AppData, which does not roam, for exactly
+      this reason.
+    </p>
+
+    <h3>Secret keys</h3>
+    <p>
+      One file per key, <code>secrets/&lt;FINGERPRINT&gt;.pgp</code> in rPGP's
+      own directory. On Linux and macOS each file is created readable only by
+      you (mode <code>0600</code>) in a directory only you can open
+      (<code>0700</code>), and those modes are applied again every time rPGP
+      opens its store. On Windows each file and directory gets an access
+      control list with a single entry, for your own account.
+    </p>
+    <p>Whether a key is encrypted depends on how it arrived:</p>
+    <ul>
+      <li>
+        <strong>Generated with a passphrase:</strong> encrypted with it, using
+        Sequoia's defaults: an iterated and salted SHA-256 key derivation, then
+        AES-256 for version 4 keys, or AES-128 in OCB mode for version 6 keys.
+      </li>
+      <li>
+        <strong>Generated with the passphrase left empty</strong> (it is
+        optional): stored unencrypted. File permissions are then all that
+        protects it.
+      </li>
+      <li>
+        <strong>Imported:</strong> each secret key keeps the protection it
+        arrived with, encrypted or not. When you import a key rPGP already
+        holds, the two copies are merged key by key and an imported secret
+        replaces the stored one, so importing an unencrypted backup replaces a
+        protected key with an unprotected one. (After 0.1.3, a GnuPG stub,
+        which holds no key, no longer replaces a real one.)
+      </li>
+    </ul>
+    <p>
+      rPGP has no way to add, change or remove a passphrase once a key is
+      stored, and no command that exports a secret key. Using a protected key
+      decrypts a copy in memory for that one operation, and rPGP writes no
+      decrypted copy to disk. rPGP does not lock its memory, though, so the
+      operating system can move parts of it to swap or a hibernation file,
+      including a key or passphrase in use or a message decrypted in the
+      Notepad.
+    </p>
+    <p>
+      rPGP does not save passphrases: not to a file, and not to the macOS
+      keychain, the Secret Service or Windows Credential Manager. What you
+      type stays in the app's memory, where the interface toolkit keeps copies
+      that cannot be wiped, and like the rest of that memory it can reach
+      swap.
+    </p>
+    <p>
+      The secret halves of keys held by gpg-agent or on a smartcard stay
+      there. rPGP never copies them; see <a href="#agent">gpg-agent</a>
+      below.
+    </p>
+
+    <h3>Revocation certificates</h3>
+    <p>
+      When rPGP generates a key, it also writes a revocation certificate for
+      it to <code>revocations/&lt;FINGERPRINT&gt;.rev</code>, readable only by
+      you. It is not encrypted, and anyone who has it can revoke your key.
+      Deleting the key leaves it in place, and rPGP has no way to delete it.
+      rPGP can save a copy to a place you pick.
+    </p>
+
+    <h3>Lists, settings and logs</h3>
+    <p>
+      Beside those, rPGP keeps three plain-text lists of fingerprints, one per
+      line and readable only by you: <code>trust-roots</code>,
+      <code>imported-secrets</code> and <code>sha1-accepted</code>.
+      <code>trust-roots</code> and <code>sha1-accepted</code> are the only
+      choices it remembers, and <code>imported-secrets</code> records which
+      secret keys you imported rather than generated.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>No other file.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Also an empty lock file, <code>write.lock</code>.</span></p>
+    </div>
+    <p>
+      rPGP has no settings, preferences, recent-files or window-state file.
+      rPGP's own environment variables are <code>RPGP_CERT_STORE</code>,
+      <code>RPGP_KEYSERVER</code> and <code>RPGP_ALLOW_DEBUG</code>. Others
+      matter too: <code>XDG_DATA_HOME</code> in the table above,
+      <code>GNUPGHOME</code> and the display settings under
+      <a href="#agent">gpg-agent</a>, and the proxy and certificate variables
+      described under <a href="#network">Network</a>.
+    </p>
+    <p>
+      These are rPGP's own files. The operating system and desktop can keep
+      records of their own that rPGP neither writes nor reads, such as a list
+      of files recently picked in file dialogs, saved window state or graphics
+      caches. A backup of your home folder that includes these directories
+      copies your secret keys and revocation certificates with it.
+    </p>
+    <p>
+      rPGP writes no log files. It prints a few messages to standard error:
+      that it is falling back to, or restarting on, the software renderer;
+      that the crash-dump protections below could not be applied, or that
+      <code>RPGP_ALLOW_DEBUG</code> has turned them off; that the application
+      ID could not be set; or a fatal error at startup, which may name a store
+      path. rPGP's own messages contain no key material, addresses or
+      passphrases. A crash also prints the failing library's own message.
+      Where standard error goes is up to whatever started rPGP: a desktop
+      launcher may record it in the system log, such as the systemd journal.
+      The Windows release build has no console, so there it is discarded
+      unless whoever started rPGP redirected it.
+    </p>
+
+    <h3>Files you create</h3>
+    <p>
+      Sign, Encrypt and Decrypt write their result next to the input file,
+      under a name derived from it: <code>notes.txt</code> is encrypted to
+      <code>notes.txt.asc</code> or signed as <code>notes.txt.sig</code>, and
+      decrypting <code>notes.txt.asc</code> gives <code>notes.txt</code>. If
+      the name is taken, a free one is chosen.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>In the Flatpak, results never reach your folder under the name rPGP reports, although the status line says they were written. The desktop's document portal keeps each one as a hidden file named <code>.xdp-&lt;name&gt;-XXXXXX</code> in the input's folder and does not remove it, so every decrypt there leaves its plaintext in a hidden file. Outside the Flatpak, decrypted files are created with your system's default permissions, typically <code>0644</code>, which other accounts can read if they can reach the folder.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>The Flatpak asks where to save instead. Outside the Flatpak, on Linux and macOS, decrypted files are readable only by you. In the Flatpak rPGP asks for the same, but the file on your disk is created by the desktop's document portal.</span></p>
+    </div>
+    <p>
+      Encrypted files and signatures get ordinary permissions, and on Windows
+      every result takes its folder's permissions. Encrypted and decrypted
+      results are written first as a <code>.part</code> file beside them and
+      renamed when complete. A signature is written straight to its name,
+      except one saved through the Flatpak's save dialog after 0.1.3, which is
+      staged the same way.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>A <code>.part</code> file is removed when the operation itself fails, but left behind when the last write or the final rename fails, for example on a full disk, or when rPGP crashes or is closed partway through. After a decrypt it can hold some or all of the plaintext.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>A <code>.part</code> file is removed whenever an operation fails, and left behind only if rPGP crashes or is closed partway through; after a decrypt it then holds part of the plaintext. In the Flatpak such a leftover is a hidden <code>.xdp-</code> file in the folder you saved to.</span></p>
+    </div>
+    <p>
+      Exporting a certificate writes only its public part, without local
+      certifications, to a file you pick. Import reads only files you pick.
+    </p>
+    <p>
+      rPGP does not use the system's temporary directory. It writes its own
+      files beside their final place and renames them into it.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Those staging files have fixed names, such as <code>&lt;FINGERPRINT&gt;.pgp.tmp</code>, and one left behind by a crash stays.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Staging files are named <code>&lt;file&gt;.&lt;process&gt;-&lt;n&gt;.tmp</code>, removed if the write fails, and the next time the store opens, rPGP removes any it can that were left behind.</span></p>
+    </div>
+
+    <h3>Deleting</h3>
+    <p>
+      Deleting a certificate removes its file and, once you confirm that too,
+      its secret key file. There is no secure erase: files are unlinked, not
+      overwritten. Some things stay behind:
+    </p>
+    <ul>
+      <li>its revocation certificate;</li>
+      <li>its rows in Sequoia's index: fingerprint, key IDs, user IDs, e-mail addresses and domains;</li>
+      <li>any hashes of its signatures in Sequoia's signature cache;</li>
+      <li>its entry in <code>imported-secrets</code>;</li>
+      <li>
+        any <code>&lt;FINGERPRINT&gt;.pgp.unreadable</code> copy (or
+        <code>.unreadable.1</code>, <code>.unreadable.2</code> and so on). When
+        a stored secret key file cannot be read at the moment rPGP needs to
+        write that key, rPGP renames it aside rather than overwriting it, and
+        it stays until you remove it.
+      </li>
+    </ul>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Also removes the certificate from <code>trust-roots</code>. Its <code>sha1-accepted</code> entry and any leftover <code>.tmp</code> copy of the key stay.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Also removes it from <code>trust-roots</code> and <code>sha1-accepted</code>, and removes any leftover staging copy of the key.</span></p>
+    </div>
+    <p>
+      To remove everything rPGP has stored, delete both directories in the
+      table above yourself. On a native build the certificate directory is
+      shared with <code>sq</code> and other Sequoia tools.
+    </p>
+
+    <h3 id="crash-dumps">Crash dumps</h3>
+    <p>
+      On Linux rPGP turns off core dumps and marks its process as not
+      dumpable, which also stops other programs running as you from attaching
+      a debugger to it. On macOS it turns off core dumps; the system's own
+      crash reporter can still write a report of the crash, which is not a
+      copy of its memory, and sends it to Apple only if you share analytics
+      with Apple or choose to send it. On Windows it does neither and leaves Windows Error
+      Reporting as it is, so a crash dump, if Windows makes one, could contain
+      key material or a passphrase in use at the time, and Windows may send
+      its report to Microsoft according to your diagnostic data settings.
+      Setting <code>RPGP_ALLOW_DEBUG</code> turns these protections off.
+    </p>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------- network -->
+<section class="band" id="network">
+  <div class="wrap policy">
+    <p class="section-label">OVER THE NETWORK</p>
+    <h2>Only when you look something up, or publish.</h2>
+    <p class="deck">
+      Nothing is sent at startup, nothing runs in the background, and the
+      certificates you hold are never refreshed from a server on their own.
+      The Refresh button rereads your own files. Two things you do make rPGP
+      connect, and this section covers each request they make.
+    </p>
+
+    <h3>Looking up a certificate</h3>
+    <p>
+      <strong>When:</strong> you type into <em>Look up a certificate</em> and
+      press Search or Enter.
+    </p>
+    <p>
+      If what you typed contains an <code>@</code>, rPGP first asks the Web
+      Key Directory (WKD) of that address's domain. If that fails or finds
+      nothing, the same text goes to the keyserver. Anything else, such as a
+      fingerprint, a key ID or a name, goes straight to the keyserver.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Any certificate a WKD host returns ends the lookup.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>A WKD reply counts only for certificates that carry the address you asked for. If none does, the keyserver is asked too, and so also receives the address.</span></p>
+    </div>
+
+    <h4>Web Key Directory</h4>
+    <p>
+      <strong>Goes to:</strong> a web server at the address's domain: for
+      <code>alice@example.org</code>, either
+      <code>openpgpkey.example.org</code> or <code>example.org</code>. It is
+      whichever server that domain's DNS names. Usually that is run by or for
+      the domain's owner, but it can be a hosted WKD service, including
+      keys.openpgp.org's own (<code>wkd.keys.openpgp.org</code>). It is never
+      run by rPGP.
+    </p>
+    <p><strong>Sends:</strong> an HTTPS request of one of these forms:</p>
+    <pre class="path">https://openpgpkey.example.org/.well-known/openpgpkey/example.org/hu/&lt;hash&gt;?l=alice
+https://example.org/.well-known/openpgpkey/hu/&lt;hash&gt;?l=alice</pre>
+    <p>
+      That is the domain, a hash of the part before the <code>@</code>
+      (SHA-1, z-base-32 encoded), and that part itself, unhashed, in
+      <code>l=</code>. The WKD host therefore learns the whole address you
+      looked up.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Asks <code>openpgpkey.&lt;domain&gt;</code> first and, if that fails for any reason, asks <code>&lt;domain&gt;</code> as well, so up to two hosts receive the address.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Looks up <code>openpgpkey.&lt;domain&gt;</code> in DNS first. If that name has an address, or DNS gives no answer within ten seconds, only that host is asked. If DNS says it has no address, or returns an error, only <code>&lt;domain&gt;</code> is. One WKD host receives the address, and the DNS query for <code>openpgpkey.&lt;domain&gt;</code> is made either way.</span></p>
+    </div>
+
+    <h4>Keyserver</h4>
+    <p>
+      <strong>Goes to:</strong> <code>https://keys.openpgp.org</code>, unless
+      you have set <a href="#keyserver"><code>RPGP_KEYSERVER</code></a>.
+    </p>
+    <p><strong>Sends:</strong> one HTTPS request:</p>
+    <pre class="path">https://keys.openpgp.org/pks/lookup?op=get&amp;options=mr&amp;search=&lt;what you typed&gt;</pre>
+    <p>
+      That is what you typed, with spaces trimmed from either end: an e-mail
+      address, a fingerprint, a key ID or any other text. Nothing from your
+      own store goes with it.
+    </p>
+
+    <h4>What is kept</h4>
+    <p>
+      Results are held in memory. A certificate is written to your store only
+      when you click Import (or Update) on it, and is then merged into any
+      copy you already hold, public parts only. Your query is not saved or
+      logged, and nothing else a server sends back is written to disk, apart
+      from the signature hashes described under
+      <a href="#stored">public certificates</a>.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Results are shown and imported as the server sent them, unfiltered.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>A WKD result is cut down to the address you asked for, with its other user IDs and photos removed. A keyserver result for a fingerprint, key ID or address is limited to certificates that match it; other searches are shown as the server returned them.</span></p>
+    </div>
+
+    <h3>Publishing your key</h3>
+    <p>
+      <strong>When:</strong> only after two clicks: <em>Publish to
+      keyserver…</em>, offered only for a key that has a secret-key file in
+      rPGP's store (possibly a GnuPG stub standing in for a smartcard key),
+      then <em>Publish permanently</em> in a dialog that warns
+      the upload cannot be undone. That dialog always names keys.openpgp.org,
+      even when <code>RPGP_KEYSERVER</code> sends the upload elsewhere.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>The upload takes whichever certificate the details pane shows at the moment you confirm, and does not check it again.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>The upload uses the certificate the dialog was opened for, and itself refuses a certificate without a secret-key file.</span></p>
+    </div>
+    <p>
+      <strong>Sends, first:</strong> one HTTPS request,
+      <code>POST https://keys.openpgp.org/vks/v1/upload</code>, whose body is
+      <code>{"keytext": "&lt;your certificate&gt;"}</code>, the certificate
+      being ASCII-armored.
+    </p>
+    <ul>
+      <li>
+        <strong>Included:</strong> the public primary key and subkeys; every
+        user ID (names and e-mail addresses) and every user attribute, such
+        as a photo, that carries an exportable self-signature; and every
+        exportable signature on them, including revocations and
+        certifications other people have made on your key. The armor's
+        comment lines repeat the fingerprint and the valid user IDs.
+      </li>
+      <li>
+        <strong>Left out:</strong> secret key material, and local
+        (non-exportable) certifications.
+      </li>
+    </ul>
+    <p>
+      <strong>Sends, second,</strong> straight after and without asking
+      again: <code>POST https://keys.openpgp.org/vks/v1/request-verify</code>
+      with the token from the upload's reply and a list of every address to
+      which the keyserver's reply gives any status other than published:
+      unpublished, pending and revoked ones alike, if there are any. You do
+      not choose the addresses. According to keys.openpgp.org's
+      documentation, it then sends a verification e-mail to the addresses it
+      accepts, subject to its rate limits, and its reply marks those as
+      pending; the mail comes from the keyserver, not from rPGP. The token is
+      used for this one request and not kept.
+    </p>
+    <p>
+      What happens to the upload is then up to the keyserver. keys.openpgp.org
+      describes its handling in <a href="#services">its own policy</a>. The
+      in-app warning, that every user ID on the key becomes public
+      permanently, is stricter than that policy.
+    </p>
+
+    <h3>What every request carries</h3>
+    <ul>
+      <li>Your IP address (or, in 0.1.3, a proxy's, as described <a href="#proxies">below</a>), and the time, to whichever server receives it.</li>
+      <li>A <code>User-Agent</code> header naming the app and its version, such as <code>rpgp/0.1.3</code>.</li>
+      <li><code>Accept: */*</code>, and on the two publishing requests <code>Content-Type: application/json</code>.</li>
+      <li>
+        No cookies, no login and no other identifying header. Each request
+        rPGP starts builds a new client, so no connection, TLS session, cookie
+        or cache carries over from one to the next; only a redirect within one
+        request can reuse its connection.
+      </li>
+    </ul>
+
+    <h3>Who can see what</h3>
+    <p>
+      Every request is HTTPS, over TLS 1.2 or 1.3, unless you point
+      <code>RPGP_KEYSERVER</code> at an <code>http://</code> address. The WKD
+      addresses and the default keyserver are written into the code as
+      <code>https://</code>, and a redirect off HTTPS is refused.
+    </p>
+    <p>
+      Unless a proxy is in use (0.1.3 only; see <a href="#proxies">below</a>),
+      host names are resolved by your operating system's resolver, so your
+      DNS provider sees <code>openpgpkey.&lt;domain&gt;</code> and/or
+      <code>&lt;domain&gt;</code> for a WKD lookup, and
+      <code>keys.openpgp.org</code>. The network between you and the server
+      sees the same host name in the TLS handshake, and your IP address. The
+      path, the query string (the address or search text) and the upload are
+      encrypted.
+    </p>
+    <p>
+      Server certificates are checked inside rPGP by rustls, which fetches no
+      revocation data, so the check makes no connections of its own.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Trusts only Mozilla's root certificates, built into the app.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Trusts Mozilla's roots and also the certificates your operating system trusts, read at the first lookup or upload (or those in <code>SSL_CERT_FILE</code> and <code>SSL_CERT_DIR</code> when set). A network that inspects TLS, and whose certificate authority is installed on your computer, as on some managed networks, can therefore read lookups and uploads.</span></p>
+    </div>
+
+    <h3 id="redirects">Redirects</h3>
+    <p>
+      A server can redirect a request to another host. rPGP follows up to
+      four redirects, over HTTPS only. The host a request is redirected to
+      receives your IP address and, in the <code>Referer</code> header, the
+      previous URL, including the <code>l=</code> part of an address or the
+      search text. A 307 or 308 redirect of an upload sends the certificate
+      to the new host, and one of the verification request sends the token
+      and your list of addresses; a 301, 302 or 303 turns either into a
+      <code>GET</code> without them.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Only a redirect that names an IP address on your own machine or private network is refused, and not every such range is covered: 100.64.0.0/10, used by carrier NAT and Tailscale, is not. A redirect to a host name that resolves to such an address is followed. The first request itself is not checked, so it goes ahead to a host name that resolves to such an address, or to a WKD domain written as one.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Any request to an address on your own machine or private network is refused, whether it is written as an IP address or a host name resolves to it, and more ranges are covered (100.64.0.0/10 among them). The one exception is the keyserver you configured, on requests to the keyserver. A redirect to another port on the keyserver's host is refused too.</span></p>
+    </div>
+
+    <h3 id="proxies">Proxies and Tor</h3>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Honours an HTTP proxy named in <code>HTTPS_PROXY</code> or <code>ALL_PROXY</code> (lowercase forms too, and <code>HTTP_PROXY</code> only for an <code>http://</code> keyserver), with <code>NO_PROXY</code>, but not the proxy settings of Windows, macOS or the Linux desktop. The proxy sees your IP address, the host names rPGP connects to and its <code>User-Agent</code>; host names are then resolved by the proxy rather than your DNS, and servers see the proxy's address instead of yours. A <code>socks4://</code>, <code>socks4a://</code>, <code>socks5://</code> or <code>socks5h://</code> value makes lookups and uploads fail rather than go direct. A value with any other scheme except <code>http://</code> and <code>https://</code>, such as <code>socks://</code>, is ignored, and rPGP then connects directly.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Ignores every proxy setting, environment variables and system settings alike, and always connects directly.</span></p>
+    </div>
+    <p>
+      Neither version speaks SOCKS. In 0.1.3, Tor can be used only through
+      an HTTP CONNECT proxy named in <code>HTTPS_PROXY</code>, such as Tor's
+      own HTTPTunnelPort. After 0.1.3, sending rPGP's traffic through Tor
+      takes a system-wide setup outside the app.
+    </p>
+
+    <h3 id="keyserver">Choosing another keyserver</h3>
+    <p>
+      Setting the environment variable <code>RPGP_KEYSERVER</code> to a
+      server's address sends both lookups and uploads there instead of
+      keys.openpgp.org. There is no setting for it in the app. rPGP does not
+      require that address to start with <code>https://</code>, so an
+      <code>http://</code> server would receive lookups and uploads
+      unencrypted, and the publish dialog still names keys.openpgp.org.
+    </p>
+    <p>
+      rPGP contacts no other keyserver, and never follows a certificate's
+      preferred-keyserver setting.
+    </p>
+
+    <h3>The Flatpak's network permission</h3>
+    <p>
+      The Flatpak is granted network access for lookup and publishing; without
+      it the app still manages keys but cannot fetch or publish them. The
+      sandbox does not limit which hosts can be reached, so the limits are the
+      ones described here.
+    </p>
+
+    <h3>The rpgp.app link</h3>
+    <p>
+      The About dialog's rpgp.app link, when you click it, asks the operating
+      system to open <code>https://rpgp.app/</code> in your browser. rPGP makes
+      no connection for it, and nothing opens it automatically.
+      <a href="#website">This website</a> is covered below.
+    </p>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------ local -->
+<section class="band band-sunken" id="local">
+  <div class="wrap policy">
+    <p class="section-label">ON THE SAME COMPUTER</p>
+    <h2>What rPGP talks to without the network.</h2>
+
+    <h3 id="agent">gpg-agent</h3>
+    <p>
+      Smartcard keys, and keys GnuPG holds, are used through your own
+      gpg-agent. Each time rPGP loads its list of certificates (at startup, on
+      Refresh and after every change), it asks the agent which keys it holds.
+      It finds the agent by running GnuPG's <code>gpgconf</code>, and if none
+      is running it may have <code>gpgconf</code> start one, in which case
+      GnuPG may create files of its own, such as its socket directory. The
+      connection is to a local socket, and leaves the computer only if that
+      socket is itself forwarded from another one, as SSH can do.
+    </p>
+    <p>
+      Listing keys sends no certificates: rPGP asks for the agent's list of
+      key grips and matches them itself. Signing or decrypting with an agent
+      key sends which key to use, the hash to sign or the encrypted session
+      key, a description for the agent's PIN prompt, and the terminal and
+      display settings that prompt needs (<code>GPG_TTY</code> or the terminal
+      name, <code>TERM</code>, <code>DISPLAY</code>, <code>XAUTHORITY</code>,
+      <code>DBUS_SESSION_BUS_ADDRESS</code>).
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>The prompt description gives the key ID and creation date.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>It also gives the certificate's primary user ID: a name and e-mail address.</span></p>
+    </div>
+    <p>
+      You type the PIN or passphrase into the agent's own pinentry, so it
+      never passes through rPGP, and how long it is cached is up to your agent
+      configuration. rPGP never sends the agent a passphrase or a key, and
+      never imports, exports or deletes keys there.
+    </p>
+    <p>
+      rPGP itself does not read <code>~/.gnupg</code>; GnuPG's own programs
+      use it as usual. GnuPG's <code>pubring.kbx</code> is read only if you
+      pick it in Import.
+    </p>
+    <p>
+      The Flatpak is given the host's GnuPG socket directory,
+      <code>/run/user/&lt;uid&gt;/gnupg</code>, so that it can use the host's
+      agent, and is not given <code>~/.gnupg</code>. That directory also holds
+      GnuPG's other sockets, such as the ssh-agent and scdaemon ones; rPGP
+      connects only to the agent's main socket.
+    </p>
+
+    <h3>The desktop</h3>
+    <p>
+      <strong>File dialogs.</strong> On Linux, rPGP asks the desktop portal's
+      file chooser over the session bus, or runs <code>zenity</code> where
+      there is no portal. It also reads the light or dark appearance setting
+      from the portal. The Flatpak has no access to your home directory:
+      outside its own data directory, it reaches only the files you pick and
+      the GnuPG sockets above.
+    </p>
+    <p>
+      <strong>Clipboard.</strong> rPGP's Copy buttons copy only when pressed.
+      Its text fields also copy a selection with Ctrl+C, and on Linux any text
+      you select in one with the mouse goes to the primary selection, which
+      other programs can read, as in most apps. rPGP reads the clipboard only
+      when you paste into a field (on Linux, a middle-click pastes the primary
+      selection), and never clears it. Fingerprints, key IDs and user IDs are
+      copied as ordinary text.
+    </p>
+    <div class="differs">
+      <p><span class="pill">0.1.3</span><span>Notepad output, which may be a decrypted message, is copied as ordinary text too, so clipboard history, clipboard managers and, on Windows, clipboard sync if you turned it on, can keep it. On X11 it is handed to the clipboard manager when rPGP quits. The output box cannot be selected, so its Copy button is the only way to copy it. Passphrase fields can be selected and copied, and on Linux a selected passphrase lands in the primary selection.</span></p>
+      <p><span class="pill pill-accent">after 0.1.3</span><span>Notepad output copied with its Copy button is marked private, with each platform's hint that clipboard history and managers should not keep it, and on X11 it is withdrawn when rPGP's window closes. In the Flatpak on GNOME or sway, which do not offer it the clipboard protocol that carries the mark, the copy goes out unmarked, and the status line says so. Text you select in the output and copy with Ctrl+C is copied unmarked, and on Linux selecting it with the mouse puts it in the primary selection. Passphrase fields refuse copy, cut and mouse selection.</span></p>
+    </div>
+    <p>
+      In both, the Notepad's input box, which may hold a message you are
+      about to encrypt, behaves like any other text field.
+    </p>
+    <p>
+      <strong>Accessibility.</strong> rPGP describes its window to the
+      system's accessibility services (AT-SPI on Linux, UI Automation on
+      Windows, the accessibility interface on macOS) so that screen readers
+      can read it. That includes user IDs, fingerprints and Notepad text.
+      Passphrase fields are described as empty.
+    </p>
+  </div>
+</section>
+
+<!-- -------------------------------------------------------------- not -->
+<section class="band" id="not">
+  <div class="wrap policy">
+    <p class="section-label">WHAT IT DOES NOT DO</p>
+    <h2>No telemetry, no accounts, no update checks.</h2>
+
+    <ul>
+      <li>No telemetry, analytics or usage reporting of any kind.</li>
+      <li>No crash reporting of its own. The operating system's crash reporter is outside the app; see <a href="#crash-dumps">crash dumps</a>.</li>
+      <li>No update checks: the app never asks whether a newer version exists.</li>
+      <li>No account, no sign-in and no cookies.</li>
+      <li>No automatic network traffic: nothing at startup, and no background refresh of the certificates you hold.</li>
+      <li>No downloaded fonts, icons or other assets. Everything the window shows is built in.</li>
+      <li>No other servers: the requests described above are the only ones rPGP makes, and Sequoia's own network library is not built in.</li>
+      <li>No secret key or passphrase sent anywhere, ever.</li>
+    </ul>
+
+    <p class="note">
+      Checked by reading the source of rPGP 0.1.3 and of the
+      <code>master</code> branch at <code>c1f0b54</code>, and the source and
+      dependency lists of the libraries both are built from.
+      No capture of a running build's network traffic was made.
+    </p>
+  </div>
+</section>
+
+<!-- --------------------------------------------------------- services -->
+<section class="band band-sunken" id="services">
+  <div class="wrap policy">
+    <p class="section-label">OTHER PEOPLE'S SERVERS</p>
+    <h2>Where your requests end up.</h2>
+    <p class="deck">
+      The app sends nothing to the rPGP project. Everything it sends goes to
+      the servers below, under their own policies.
+    </p>
+
+    <h3>keys.openpgp.org</h3>
+    <p>
+      The default keyserver, a community-run service. It receives lookups that
+      WKD does not answer, lookups without an <code>@</code>, WKD lookups for
+      domains that delegate their WKD to it, and everything you publish. Its
+      <a href="https://keys.openpgp.org/about/privacy/">privacy policy</a>
+      says, among other things, that it:
+    </p>
+    <ul>
+      <li>logs all incoming requests for 30 days, with IP addresses anonymized for storage;</li>
+      <li>processes public key material, self-signatures and revocation signatures to provide the service, and may hand that data to third parties on request for development or research;</li>
+      <li>publishes an e-mail address only after its owner confirms it by e-mail, and lets it be found by the exact address only, not by name;</li>
+      <li>strips user IDs without an e-mail address, and photos, on upload, and does not store them;</li>
+      <li>lets you remove your addresses with its "manage" tool, and deletes a certificate on request to its support address; anyone can upload it again unless you also ask support to banlist it.</li>
+    </ul>
+
+    <h3>Everyone else</h3>
+    <ul>
+      <li><strong>WKD hosts</strong> are whichever servers the DNS of the address's domain names: usually run by or for the domain's owner, but possibly a hosted WKD service. rPGP cannot tell you their policies.</li>
+      <li><strong>A keyserver you choose</strong> with <code>RPGP_KEYSERVER</code> works under its operator's policy.</li>
+      <li><strong>Any host a server redirects to</strong> receives what is described under <a href="#redirects">redirects</a>.</li>
+      <li><strong>Your DNS provider and network</strong> see the host names and your IP address, as described above.</li>
+      <li><strong>Your operating system</strong> may check the app itself when you first open it, as Gatekeeper does on macOS and SmartScreen on Windows, and those checks can contact Apple or Microsoft. They are the system's, not rPGP's, and are not covered here.</li>
+      <li>
+        <strong>Downloads.</strong> Every package is downloaded from GitHub
+        Releases, under the
+        <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub
+        Privacy Statement</a>. Installing the Flatpak bundle fetches its
+        runtime from the Flatpak remotes you have configured. winget, Homebrew
+        and Flatpak are separate tools, and what they collect is not covered
+        here.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------- website -->
+<section class="band" id="website">
+  <div class="wrap policy">
+    <p class="section-label">THIS WEBSITE</p>
+    <h2>rpgp.app itself.</h2>
+
+    <ul>
+      <li>
+        It is hosted on GitHub Pages. GitHub logs every visitor's IP address
+        for security purposes, as its
+        <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection">GitHub
+        Pages documentation</a> says, under the
+        <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub
+        Privacy Statement</a>.
+      </li>
+      <li>
+        It loads only its own files: its stylesheet, script, fonts and images.
+        No third-party scripts, fonts, CDNs, analytics, trackers or embeds.
+      </li>
+      <li>Its own code sets no cookies.</li>
+      <li>
+        Clicking the light and dark switch stores your choice in your
+        browser's local storage, under <code>rpgp-theme</code>. It is read on
+        each page load and never leaves your browser.
+      </li>
+      <li>A copy button puts the command beside it on your clipboard, only when you click it.</li>
+      <li>Links to GitHub and other sites are ordinary links, and those sites' own policies apply.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------- contact -->
+<section class="band band-sunken" id="contact">
+  <div class="wrap policy">
+    <p class="section-label">CONTACT</p>
+    <h2>Questions, and changes.</h2>
+
+    <p>
+      Questions about this page, or anything the app does that it does not
+      describe, go to the issue tracker at
+      <a href="https://github.com/jzbz/rpgp/issues">github.com/jzbz/rpgp/issues</a>.
+      Issues are public, so leave out anything you would not publish.
+    </p>
+    <p>
+      This policy is effective from 2026-09-28. It covers rPGP 0.1.3 and the
+      unreleased code after it, as of commit <code>c1f0b54</code>. When a
+      release changes anything described here, this page changes with it, and
+      so does the date. What it says about the app can
+      be checked against <a href="https://github.com/jzbz/rpgp">the source</a>.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="colophon">
+  <div class="wrap colophon-inner">
+    <div class="colophon-brand">
+      <svg class="ico ico-32" aria-hidden="true"><use href="#i-shield"/></svg>
+      <span class="wordmark">rPGP</span>
+      <p>An OpenPGP certificate manager for Linux, macOS and Windows.</p>
+    </div>
+
+    <nav class="colophon-links" aria-label="Elsewhere">
+      <a href="https://github.com/jzbz/rpgp">Source<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg></a>
+      <a href="https://github.com/jzbz/rpgp/issues">Issues<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg></a>
+      <a href="./" aria-current="page">Privacy</a>
+      <a href="https://jz.bz/">jz<svg class="ico" aria-hidden="true"><use href="#i-link"/></svg></a>
+    </nav>
+  </div>
+</footer>
+
+<script src="../assets/main.js"></script>
+</body>
+</html>
